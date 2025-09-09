@@ -1,0 +1,282 @@
+[
+  {
+    "id": "1",
+    "text": "car",
+    "category": "vehicles",
+    "imagePath": "assets/images/car.png",
+    "audioPath": "assets/audios/car.mp3"
+  },
+  {
+    "id": "2",
+    "text": "truck",
+    "category": "vehicles",
+    "imagePath": "assets/images/truck.png",
+    "audioPath": "assets/audios/truck.mp3"
+  },
+  {
+    "id": "3",
+    "text": "bus",
+    "category": "vehicles",
+    "imagePath": "assets/images/bus.png",
+    "audioPath": "assets/audios/bus.mp3"
+  },
+  {
+    "id": "4",
+    "text": "bike",
+    "category": "vehicles",
+    "imagePath": "assets/images/bike.png",
+    "audioPath": "assets/audios/bike.mp3"
+  },
+  {
+    "id": "5",
+    "text": "train",
+    "category": "vehicles",
+    "imagePath": "assets/images/train.png",
+    "audioPath": "assets/audios/train.mp3"
+  },
+  {
+    "id": "6",
+    "text": "slide",
+    "category": "playground",
+    "imagePath": "assets/images/slide.png",
+    "audioPath": "assets/audios/slide.mp3"
+  },
+  {
+    "id": "7",
+    "text": "swing",
+    "category": "playground",
+    "imagePath": "assets/images/swing.png",
+    "audioPath": "assets/audios/swing.mp3"
+  },
+  {
+    "id": "8",
+    "text": "seesaw",
+    "category": "playground",
+    "imagePath": "assets/images/seesaw.png",
+    "audioPath": "assets/audios/seesaw.mp3"
+  },
+  {
+    "id": "9",
+    "text": "dog",
+    "category": "animals",
+    "imagePath": "assets/images/dog.png",
+    "audioPath": "assets/audios/dog.mp3"
+  },
+  {
+    "id": "10",
+    "text": "cat",
+    "category": "animals",
+    "imagePath": "assets/images/cat.png",
+    "audioPath": "assets/audios/cat.mp3"
+  },
+  {
+    "id": "11",
+    "text": "elephant",
+    "category": "animals",
+    "imagePath": "assets/images/elephant.png",
+    "audioPath": "assets/audios/elephant.mp3"
+  },
+  {
+    "id": "12",
+    "text": "lion",
+    "category": "animals",
+    "imagePath": "assets/images/lion.png",
+    "audioPath": "assets/audios/lion.mp3"
+  },
+  {
+    "id": "13",
+    "text": "monkey",
+    "category": "animals",
+    "imagePath": "assets/images/monkey.png",
+    "audioPath": "assets/audios/monkey.mp3"
+  },
+  {
+    "id": "14",
+    "text": "bird",
+    "category": "animals",
+    "imagePath": "assets/images/bird.png",
+    "audioPath": "assets/audios/bird.mp3"
+  },
+  {
+    "id": "15",
+    "text": "fish",
+    "category": "animals",
+    "imagePath": "assets/images/fish.png",
+    "audioPath": "assets/audios/fish.mp3"
+  },
+  {
+    "id": "16",
+    "text": "red",
+    "category": "colors",
+    "imagePath": "assets/images/red.png",
+    "audioPath": "assets/audios/red.mp3"
+  },
+  {
+    "id": "17",
+    "text": "blue",
+    "category": "colors",
+    "imagePath": "assets/images/blue.png",
+    "audioPath": "assets/audios/blue.mp3"
+  },
+  {
+    "id": "18",
+    "text": "green",
+    "category": "colors",
+    "imagePath": "assets/images/green.png",
+    "audioPath": "assets/audios/green.mp3"
+  },
+  {
+    "id": "19",
+    "text": "yellow",
+    "category": "colors",
+    "imagePath": "assets/images/yellow.png",
+    "audioPath": "assets/audios/yellow.mp3"
+  },
+  {
+    "id": "20",
+    "text": "orange",
+    "category": "colors",
+    "imagePath": "assets/images/orange.png",
+    "audioPath": "assets/audios/orange.mp3"
+  },
+  {
+    "id": "21",
+    "text": "one",
+    "category": "numbers",
+    "imagePath": "assets/images/one.png",
+    "audioPath": "assets/audios/one.mp3"
+  },
+  {
+    "id": "22",
+    "text": "two",
+    "category": "numbers",
+    "imagePath": "assets/images/two.png",
+    "audioPath": "assets/audios/two.mp3"
+  },
+  {
+    "id": "23",
+    "text": "three",
+    "category": "numbers",
+    "imagePath": "assets/images/three.png",
+    "audioPath": "assets/audios/three.mp3"
+  },
+  {
+    "id": "24",
+    "text": "four",
+    "category": "numbers",
+    "imagePath": "assets/images/four.png",
+    "audioPath": "assets/audios/four.mp3"
+  },
+  {
+    "id": "25",
+    "text": "five",
+    "category": "numbers",
+    "imagePath": "assets/images/five.png",
+    "audioPath": "assets/audios/five.mp3"
+  },
+  {
+    "id": "26",
+    "text": "apple",
+    "category": "food",
+    "imagePath": "assets/images/apple.png",
+    "audioPath": "assets/audios/apple.mp3"
+  },
+  {
+    "id": "27",
+    "text": "banana",
+    "category": "food",
+    "imagePath": "assets/images/banana.png",
+    "audioPath": "assets/audios/banana.mp3"
+  },
+  {
+    "id": "28",
+    "text": "bread",
+    "category": "food",
+    "imagePath": "assets/images/bread.png",
+    "audioPath": "assets/audios/bread.mp3"
+  },
+  {
+    "id": "29",
+    "text": "milk",
+    "category": "food",
+    "imagePath": "assets/images/milk.png",
+    "audioPath": "assets/audios/milk.mp3"
+  },
+  {
+    "id": "30",
+    "text": "egg",
+    "category": "food",
+    "imagePath": "assets/images/egg.png",
+    "audioPath": "assets/audios/egg.mp3"
+  },
+  {
+    "id": "31",
+    "text": "head",
+    "category": "body",
+    "imagePath": "assets/images/head.png",
+    "audioPath": "assets/audios/head.mp3"
+  },
+  {
+    "id": "32",
+    "text": "hand",
+    "category": "body",
+    "imagePath": "assets/images/hand.png",
+    "audioPath": "assets/audios/hand.mp3"
+  },
+  {
+    "id": "33",
+    "text": "foot",
+    "category": "body",
+    "imagePath": "assets/images/foot.png",
+    "audioPath": "assets/audios/foot.mp3"
+  },
+  {
+    "id": "34",
+    "text": "eye",
+    "category": "body",
+    "imagePath": "assets/images/eye.png",
+    "audioPath": "assets/audios/eye.mp3"
+  },
+  {
+    "id": "35",
+    "text": "nose",
+    "category": "body",
+    "imagePath": "assets/images/nose.png",
+    "audioPath": "assets/audios/nose.mp3"
+  },
+  {
+    "id": "36",
+    "text": "ball",
+    "category": "toys",
+    "imagePath": "assets/images/ball.png",
+    "audioPath": "assets/audios/ball.mp3"
+  },
+  {
+    "id": "37",
+    "text": "doll",
+    "category": "toys",
+    "imagePath": "assets/images/doll.png",
+    "audioPath": "assets/audios/doll.mp3"
+  },
+  {
+    "id": "38",
+    "text": "car",
+    "category": "toys",
+    "imagePath": "assets/images/toy_car.png",
+    "audioPath": "assets/audios/toy_car.mp3"
+  },
+  {
+    "id": "39",
+    "text": "blocks",
+    "category": "toys",
+    "imagePath": "assets/images/blocks.png",
+    "audioPath": "assets/audios/blocks.mp3"
+  },
+  {
+    "id": "40",
+    "text": "teddy bear",
+    "category": "toys",
+    "imagePath": "assets/images/teddy_bear.png",
+    "audioPath": "assets/audios/teddy_bear.mp3"
+  }
+]
