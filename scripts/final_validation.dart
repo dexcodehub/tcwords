@@ -66,7 +66,7 @@ void _validateRouting() {
   print('3. 验证路由配置...');
   
   final routes = [
-    '/matching-game-v2',
+    '/matching-game',
     '/game-demo'
   ];
   

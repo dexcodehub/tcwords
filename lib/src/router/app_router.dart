@@ -10,6 +10,7 @@ import '../views/word_learning_view.dart';
 import '../views/progress_view.dart';
 import '../views/game_view.dart';
 import '../views/word_matching_game_v2.dart';
+import '../views/puzzle_game_v2.dart';
 import '../views/game_demo_view.dart';
 import '../views/achievements_view.dart';
 // ProfileView is defined at the bottom of this file
@@ -100,9 +101,16 @@ class AppRouter {
       
       // New Matching Game Route
       GoRoute(
-        path: '/matching-game-v2',
-        name: 'matching-game-v2',
+        path: '/matching-game',
+        name: 'matching-game',
         builder: (context, state) => WordMatchingGameV2(),
+      ),
+      
+      // New Puzzle Game Route
+      GoRoute(
+        path: '/puzzle-game',
+        name: 'puzzle-game',
+        builder: (context, state) => PuzzleGameV2(),
       ),
       
       // Game Demo Route

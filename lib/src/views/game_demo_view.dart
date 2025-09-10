@@ -68,7 +68,7 @@ class GameDemoView extends StatelessWidget {
             // 新版本按钮
             ElevatedButton.icon(
               onPressed: () {
-                context.go('/matching-game-v2');
+                context.go('/matching-game');
               },
               icon: const Icon(Icons.auto_awesome),
               label: const Text('体验新版本游戏'),

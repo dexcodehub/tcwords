@@ -132,7 +132,7 @@
 
 3. **体验新游戏**
    ```
-   路由: /matching-game-v2
+   路由: /matching-game
    ```
 
 ### 集成到现有游戏

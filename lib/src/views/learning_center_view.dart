@@ -7,8 +7,9 @@ import 'package:tcword/src/widgets/learning/word_search_bar.dart';
 import 'package:tcword/src/widgets/learning/smart_word_image.dart';
 import 'package:tcword/src/widgets/learning/static_word_image.dart';
 import 'package:tcword/src/views/static_image_test_view.dart';
-import 'package:tcword/src/views/word_matching_game.dart';
+import 'package:tcword/src/views/word_matching_game_v2.dart';
 import 'package:tcword/src/views/puzzle_game.dart';
+import 'package:tcword/src/views/puzzle_game_v2.dart';
 import 'package:tcword/src/models/word.dart';
 import 'package:tcword/src/models/learning/quiz_models.dart';
 import 'package:tcword/src/services/word_service.dart';
@@ -704,7 +705,7 @@ class _LearningCenterViewState extends State<LearningCenterView> with TickerProv
                 subtitle: '图文匹配游戏',
                 icon: Icons.extension,
                 color: Colors.red,
-                onTap: () => _navigateToGame(const WordMatchingGame()),
+                onTap: () => _navigateToGame(WordMatchingGameV2()),
                 difficulty: '简单',
               ),
             ),
@@ -715,7 +716,7 @@ class _LearningCenterViewState extends State<LearningCenterView> with TickerProv
                 subtitle: '字母拼写游戏',
                 icon: Icons.games,
                 color: Colors.teal,
-                onTap: () => _navigateToGame(const PuzzleGame()),
+                onTap: () => _navigateToGame(const PuzzleGameV2()),
                 difficulty: '中等',
               ),
             ),

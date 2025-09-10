@@ -6,42 +6,43 @@ import 'package:tcword/src/utils/simple_icons.dart';
 import 'package:tcword/src/services/game_engine_service.dart';
 import 'package:tcword/src/widgets/game_base_widget.dart';
 
-/// 现代化单词匹配游戏 - 使用新的游戏引擎技术
-class WordMatchingGameV2 extends GameBaseWidget {
-  WordMatchingGameV2({super.key})
+/// 现代化单词拼图游戏 - 使用新的游戏引擎技术
+class PuzzleGameV2 extends GameBaseWidget {
+  // 移除了 const，因为 AdaptiveDifficulty 不是 const 构造函数
+  PuzzleGameV2({super.key})
       : super(
-          gameTitle: '单词配对大师',
-          primaryColor: const Color(0xFFFF6B6B),
-          secondaryColor: const Color(0xFFFF8E53),
+          gameTitle: '单词拼图大师',
+          primaryColor: const Color(0xFF4CAF50),
+          secondaryColor: const Color(0xFF66BB6A),
           difficulty: AdaptiveDifficulty(initialDifficulty: 0.5),
         );
 
   @override
+  State<PuzzleGameV2> createState() => _PuzzleGameV2State();
+
+  @override
   Widget buildGameContent(BuildContext context, GameBaseState state) {
-    // 具体实现在状态类中
-    return const SizedBox();
+    // 调用状态类中的实现
+    return (state as _PuzzleGameV2State).buildGameContent(context);
   }
 
   @override
   Widget buildGameControls(BuildContext context, GameBaseState state) {
-    // 具体实现在状态类中
-    return const SizedBox();
+    // 调用状态类中的实现
+    return (state as _PuzzleGameV2State).buildGameControls(context);
   }
-
-  @override
-  State<WordMatchingGameV2> createState() => _WordMatchingGameV2State();
 }
 
-class _WordMatchingGameV2State extends GameBaseState<WordMatchingGameV2> {
+class _PuzzleGameV2State extends GameBaseState<PuzzleGameV2> {
   final WordService _wordService = WordService();
-  final List<AnimationController> _optionAnimations = [];
-  final List<Animation<double>> _optionScales = [];
-  final List<Animation<Color?>> _optionColors = [];
+  final List<AnimationController> _letterAnimations = [];
+  final List<Animation<double>> _letterScales = [];
+  final List<Animation<Color?>> _letterColors = [];
 
   List<Word> _words = [];
-  List<Word> _questionWords = [];
-  List<Word> _optionWords = [];
   Word? _currentWord;
+  List<String> _letters = [];
+  List<String?> _userLetters = [];
   bool _showResult = false;
   bool _isCorrect = false;
   String? _errorMessage;
@@ -49,7 +50,6 @@ class _WordMatchingGameV2State extends GameBaseState<WordMatchingGameV2> {
 
   late AnimationController _questionAnimation;
   late Animation<double> _questionScale;
-  // late Animation<Color?> _questionColor; // 暂时注释未使用的变量
 
   @override
   void initState() {
@@ -64,11 +64,6 @@ class _WordMatchingGameV2State extends GameBaseState<WordMatchingGameV2> {
       duration: const Duration(milliseconds: 800),
     );
     _questionScale = GameEngineService.createBounceAnimation(_questionAnimation);
-    // _questionColor = GameEngineService.createColorTransitionAnimation(
-    //   _questionAnimation,
-    //   const Color(0xFF64B5F6),
-    //   const Color(0xFF42A5F5),
-    // );
   }
 
   @override
@@ -99,25 +94,39 @@ class _WordMatchingGameV2State extends GameBaseState<WordMatchingGameV2> {
   }
 
   void _prepareQuestion() {
-    if (_words.length < 4) {
+    if (_words.isEmpty) {
       setState(() {
-        _errorMessage = '可用单词数量不足，无法开始游戏';
+        _errorMessage = '没有可用的单词进行游戏';
       });
       return;
     }
 
     // 根据难度生成游戏参数
     final params = widget.difficulty.generateGameParameters();
-    final optionsCount = params['optionsCount'] as int;
+    final maxWordLength = (params['optionsCount'] as int).clamp(3, 8);
 
-    // 随机选择单词
-    final shuffledWords = List<Word>.from(_words)..shuffle();
-    _questionWords = shuffledWords.take(optionsCount).toList();
-    _currentWord = _questionWords[0];
-    _optionWords = List<Word>.from(_questionWords)..shuffle();
+    // 过滤出合适长度的单词
+    final suitableWords = _words.where((word) => word.text.length <= maxWordLength).toList();
+    if (suitableWords.isEmpty) {
+      setState(() {
+        _errorMessage = '没有合适长度的单词进行游戏';
+      });
+      return;
+    }
 
-    // 初始化选项动画
-    _initializeOptionAnimations();
+    // 随机选择一个单词
+    final shuffledWords = List<Word>.from(suitableWords)..shuffle();
+    _currentWord = shuffledWords.first;
+    
+    // 创建字母列表
+    _letters = _currentWord!.text.split('').toList();
+    _userLetters = List<String?>.filled(_letters.length, null);
+    
+    // 打乱字母顺序
+    _letters.shuffle();
+    
+    // 初始化字母动画
+    _initializeLetterAnimations();
 
     setState(() {
       _showResult = false;
@@ -131,17 +140,17 @@ class _WordMatchingGameV2State extends GameBaseState<WordMatchingGameV2> {
     _questionAnimation.forward();
   }
 
-  void _initializeOptionAnimations() {
+  void _initializeLetterAnimations() {
     // 清理旧的动画控制器
-    for (final controller in _optionAnimations) {
+    for (final controller in _letterAnimations) {
       controller.dispose();
     }
-    _optionAnimations.clear();
-    _optionScales.clear();
-    _optionColors.clear();
+    _letterAnimations.clear();
+    _letterScales.clear();
+    _letterColors.clear();
 
     // 创建新的动画控制器
-    for (int i = 0; i < _optionWords.length; i++) {
+    for (int i = 0; i < _letters.length; i++) {
       final controller = AnimationController(
         vsync: this,
         duration: const Duration(milliseconds: 500),
@@ -150,13 +159,13 @@ class _WordMatchingGameV2State extends GameBaseState<WordMatchingGameV2> {
       final scale = GameEngineService.createBounceAnimation(controller);
       final color = GameEngineService.createColorTransitionAnimation(
         controller,
-        _getOptionColor(i),
-        _getOptionColor(i).withValues(alpha: 0.8),
+        _getLetterColor(i),
+        _getLetterColor(i).withValues(alpha: 0.8),
       );
 
-      _optionAnimations.add(controller);
-      _optionScales.add(scale);
-      _optionColors.add(color);
+      _letterAnimations.add(controller);
+      _letterScales.add(scale);
+      _letterColors.add(color);
 
       // 延迟播放动画，创建波浪效果
       Future.delayed(Duration(milliseconds: i * 100), () {
@@ -165,7 +174,7 @@ class _WordMatchingGameV2State extends GameBaseState<WordMatchingGameV2> {
     }
   }
 
-  Color _getOptionColor(int index) {
+  Color _getLetterColor(int index) {
     const colors = [
       Color(0xFF4CAF50),
       Color(0xFF2196F3),
@@ -177,15 +186,52 @@ class _WordMatchingGameV2State extends GameBaseState<WordMatchingGameV2> {
     return colors[index % colors.length];
   }
 
-  void _checkAnswer(Word selectedWord) {
+  void _selectLetter(int index) {
+    onUserInteraction();
+    if (_showResult) return;
+    
+    // 找到第一个空位
+    final emptyIndex = _userLetters.indexWhere((element) => element == null);
+    if (emptyIndex != -1) {
+      setState(() {
+        _userLetters[emptyIndex] = _letters[index];
+      });
+      
+      // 播放字母动画
+      if (index < _letterAnimations.length) {
+        _letterAnimations[index].reset();
+        _letterAnimations[index].forward();
+      }
+      
+      // 检查是否填满
+      if (!_userLetters.contains(null)) {
+        _checkAnswer();
+      }
+    }
+  }
+
+  void _clearLetter(int index) {
+    onUserInteraction();
+    if (_showResult) return;
+    
+    setState(() {
+      _userLetters[index] = null;
+    });
+    
+    // 播放字母动画
+    if (index < _letterAnimations.length) {
+      _letterAnimations[index].reset();
+      _letterAnimations[index].forward();
+    }
+  }
+
+  void _checkAnswer() {
     onUserInteraction();
     incrementAttempts();
 
-    final isCorrect = selectedWord.id == _currentWord?.id;
-    // 计算实际响应时间
-    final responseTime = _questionStartTime != null 
-        ? DateTime.now().difference(_questionStartTime!).inMilliseconds / 1000.0
-        : 1.0;
+    final userAnswer = _userLetters.join('');
+    final isCorrect = userAnswer == _currentWord?.text;
+    final responseTime = 1.0; // 简化响应时间计算
 
     // 调整难度
     widget.difficulty.adjustDifficulty(isCorrect, responseTime);
@@ -199,7 +245,7 @@ class _WordMatchingGameV2State extends GameBaseState<WordMatchingGameV2> {
     _playFeedbackAnimation(isCorrect);
 
     if (isCorrect) {
-      updateScore(10);
+      updateScore(15); // 拼图游戏分数更高
       
       // 触发成就事件
       AchievementServiceSingleton.instance.processEvent(
@@ -226,18 +272,25 @@ class _WordMatchingGameV2State extends GameBaseState<WordMatchingGameV2> {
   }
 
   void _playFeedbackAnimation(bool isCorrect) {
-    // 播放选项动画
-    for (int i = 0; i < _optionAnimations.length; i++) {
-      final word = _optionWords[i];
-      if (word.id == _currentWord?.id) {
-        // 正确答案的动画
-        _optionAnimations[i].reset();
-        _optionAnimations[i].forward();
-      } else if (!isCorrect) {
-        // 错误答案的动画
-        _optionAnimations[i].reset();
-        _optionAnimations[i].forward();
-      }
+    // 播放字母动画
+    for (int i = 0; i < _letterAnimations.length; i++) {
+      _letterAnimations[i].reset();
+      _letterAnimations[i].forward();
+    }
+  }
+
+  void _clearAll() {
+    onUserInteraction();
+    if (_showResult) return;
+    
+    setState(() {
+      _userLetters = List<String?>.filled(_userLetters.length, null);
+    });
+    
+    // 播放所有字母动画
+    for (int i = 0; i < _letterAnimations.length; i++) {
+      _letterAnimations[i].reset();
+      _letterAnimations[i].forward();
     }
   }
 
@@ -253,8 +306,8 @@ class _WordMatchingGameV2State extends GameBaseState<WordMatchingGameV2> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  const Color(0xFF64B5F6),
-                  const Color(0xFF42A5F5),
+                  const Color(0xFF4CAF50),
+                  const Color(0xFF66BB6A),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -262,7 +315,7 @@ class _WordMatchingGameV2State extends GameBaseState<WordMatchingGameV2> {
               borderRadius: BorderRadius.circular(25),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.blue.withValues(alpha: 0.4),
+                  color: Colors.green.withValues(alpha: 0.4),
                   spreadRadius: 3,
                   blurRadius: 12,
                   offset: const Offset(0, 6),
@@ -296,49 +349,51 @@ class _WordMatchingGameV2State extends GameBaseState<WordMatchingGameV2> {
     }
   }
 
-  Widget _buildOptionButton(int index, Word word) {
-    final isCorrectAnswer = word.id == _currentWord?.id;
-    final isSelected = _showResult && isCorrectAnswer;
-
+  Widget _buildLetterButton(int index, String letter) {
     return AnimatedBuilder(
-      animation: _optionAnimations[index],
+      animation: _letterAnimations[index],
       builder: (context, child) {
         return Transform.scale(
-          scale: _optionScales[index].value,
+          scale: _letterScales[index].value,
           child: GameCard(
-            backgroundColor: _optionColors[index].value ?? _getOptionColor(index),
-            onTap: _showResult ? null : () => _checkAnswer(word),
-            isSelected: isSelected,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (_showResult && isCorrectAnswer)
-                  const Icon(
-                    Icons.check_circle,
-                    color: Colors.white,
-                    size: 24,
-                  ),
-                if (_showResult && !isCorrectAnswer)
-                  const Icon(
-                    Icons.cancel,
-                    color: Colors.white,
-                    size: 24,
-                  ),
-                if (_showResult) const SizedBox(width: 8),
-                Text(
-                  word.text.toUpperCase(),
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    letterSpacing: 1.1,
-                  ),
+            backgroundColor: _letterColors[index].value ?? _getLetterColor(index),
+            onTap: () => _selectLetter(index),
+            child: Center(
+              child: Text(
+                letter.toUpperCase(),
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
-              ],
+              ),
             ),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildUserLetterSlot(int index) {
+    final letter = _userLetters[index];
+    
+    return GestureDetector(
+      onTap: letter != null ? () => _clearLetter(index) : null,
+      child: GameCard(
+        backgroundColor: letter != null 
+            ? const Color(0xFF2196F3) 
+            : Colors.grey.withOpacity(0.3),
+        child: Center(
+          child: Text(
+            letter?.toUpperCase() ?? '',
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -376,7 +431,7 @@ class _WordMatchingGameV2State extends GameBaseState<WordMatchingGameV2> {
           ),
           const SizedBox(width: 12),
           Text(
-            _isCorrect ? '太棒了！+10分 🎉' : '继续加油！ 💪',
+            _isCorrect ? '太棒了！+15分 🎉' : '继续加油！ 💪',
             style: const TextStyle(
               color: Colors.white,
               fontSize: 18,
@@ -429,17 +484,74 @@ class _WordMatchingGameV2State extends GameBaseState<WordMatchingGameV2> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // 问题单词
+                  // 问题单词图片
                   _buildWordImage(_currentWord!),
                   const SizedBox(height: 32),
                   
-                  // 选项按钮
+                  // 用户拼写字母槽
                   Wrap(
-                    spacing: 16,
-                    runSpacing: 16,
+                    spacing: 12,
+                    runSpacing: 12,
                     alignment: WrapAlignment.center,
-                    children: List.generate(_optionWords.length, (index) {
-                      return _buildOptionButton(index, _optionWords[index]);
+                    children: List.generate(_userLetters.length, (index) {
+                      return SizedBox(
+                        width: 60,
+                        height: 60,
+                        child: _buildUserLetterSlot(index),
+                      );
+                    }),
+                  ),
+                  const SizedBox(height: 24),
+                  
+                  // 操作按钮
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      GameButton(
+                        text: '清空',
+                        icon: Icons.clear,
+                        color: const Color(0xFFFF9800),
+                        onPressed: _clearAll,
+                      ),
+                      const SizedBox(width: 16),
+                      GameButton(
+                        text: '提交',
+                        icon: Icons.check,
+                        color: const Color(0xFF4CAF50),
+                        onPressed: () {
+                          if (!_userLetters.contains(null)) {
+                            _checkAnswer();
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  
+                  // 可选字母
+                  Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    alignment: WrapAlignment.center,
+                    children: List.generate(_letters.length, (index) {
+                      // 检查该字母是否已被使用
+                      final isUsed = _userLetters.contains(_letters[index]);
+                      return SizedBox(
+                        width: 60,
+                        height: 60,
+                        child: isUsed
+                            ? GameCard(
+                                backgroundColor: Colors.grey.withOpacity(0.3),
+                                child: const Center(
+                                  child: Icon(
+                                    Icons.check,
+                                    color: Colors.white,
+                                    size: 24,
+                                  ),
+                                ),
+                              )
+                            : _buildLetterButton(index, _letters[index]),
+                      );
                     }),
                   ),
                   
@@ -482,7 +594,7 @@ class _WordMatchingGameV2State extends GameBaseState<WordMatchingGameV2> {
   @override
   void dispose() {
     _questionAnimation.dispose();
-    for (final controller in _optionAnimations) {
+    for (final controller in _letterAnimations) {
       controller.dispose();
     }
     super.dispose();

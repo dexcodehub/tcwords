@@ -167,11 +167,16 @@ class AdaptiveDifficulty {
   void adjustDifficulty(bool wasCorrect, double responseTime) {
     if (wasCorrect) {
       // 答对且响应时间快，增加难度
-      if (responseTime < 2.0) {
+      if (responseTime < 1.0) {
+        // 非常快的响应，大幅增加难度
+        _currentDifficulty = (_currentDifficulty + _adjustmentRate * 2).clamp(_minDifficulty, _maxDifficulty);
+      } else if (responseTime < 3.0) {
+        // 较快的响应，适度增加难度
         _currentDifficulty = (_currentDifficulty + _adjustmentRate).clamp(_minDifficulty, _maxDifficulty);
       }
+      // 响应时间较长，保持当前难度
     } else {
-      // 答错，降低难度
+      // 答错，根据错误次数调整难度降低幅度
       _currentDifficulty = (_currentDifficulty - _adjustmentRate).clamp(_minDifficulty, _maxDifficulty);
     }
   }
@@ -187,9 +192,10 @@ class AdaptiveDifficulty {
   /// 根据难度生成游戏参数
   Map<String, dynamic> generateGameParameters() {
     return {
-      'timeLimit': 10.0 * (1.0 - _currentDifficulty) + 3.0, // 3-10秒时间限制
-      'optionsCount': (4 + (_currentDifficulty * 2)).round(), // 4-6个选项
-      'similarityThreshold': _currentDifficulty * 0.8, // 选项相似度阈值
+      'timeLimit': 12.0 * (1.0 - _currentDifficulty) + 2.0, // 2-12秒时间限制
+      'optionsCount': (3 + (_currentDifficulty * 3)).round().clamp(3, 6), // 3-6个选项
+      'similarityThreshold': _currentDifficulty * 0.7, // 选项相似度阈值
+      'hintAvailability': _currentDifficulty > 0.7 ? 1 : (_currentDifficulty > 0.4 ? 2 : 3), // 提示可用次数
     };
   }
 }
